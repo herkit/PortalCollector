@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">PortalCollector</string>
+    <string name="app_name">Portal Collector</string>
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_receive_portal">Receive Portal</string>
+    <string name="title_activity_receive_portal">Portal Received</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_import_portals">Add Portal Collection</string>
     <string name="title_activity_add_portal_file">Add Portal File</string>
