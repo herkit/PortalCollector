@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,33 +19,53 @@ public class ReceivePortal extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        db = new Db(this);
+
         Intent intent = getIntent();
         String action = intent.getAction();
         String scheme = intent.getScheme();
         String type = intent.getType();
 
+
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             handlePortalLink(intent);
         }
 
-
     }
 
+    private Db db;
+    private float lat;
+    private float lon;
+    private String title;
+
     void handlePortalLink(Intent intent) {
-        String title = intent.getStringExtra(Intent.EXTRA_SUBJECT);
         String content = intent.getStringExtra(Intent.EXTRA_TEXT);
         Pattern pattern = Pattern.compile("ingress\\.com/intel\\?ll=(\\d+\\.\\d+),(\\d+\\.\\d+)");
+
+        title = intent.getStringExtra(Intent.EXTRA_SUBJECT);
 
         Log.i("intent", content);
 
         Matcher matcher = pattern.matcher(content);
         while (matcher.find()) {
-            Log.i("portal", title);
-            Log.i("portal", "Start index: " + matcher.start());
-            Log.i("portal", "End index: " + matcher.end() + " ");
-            Log.i("portal", matcher.group());
+            lat = Float.valueOf(matcher.group(1));
+            lon = Float.valueOf(matcher.group(2));
+            Log.i("portal", lon + ", " + lat + ", \"" + title + "\"");
+
+            setContentView(R.layout.activity_receive_portal);
+
+            Button ok = (Button)findViewById(R.id.ok);
+            ok.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    db.open();
+                    long id = db.createPortal(title, lat, lon);
+                    Log.d("newportal", "Portal added to db: " + id);
+                    db.close();
+
+                }
+            });
         }
-        setContentView(R.layout.activity_receive_portal);
     }
 
     @Override

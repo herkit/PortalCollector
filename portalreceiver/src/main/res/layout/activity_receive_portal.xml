@@ -9,8 +9,28 @@
     tools:context="no.arasoft.portalcollector.portalreceiver.ReceivePortal">
 
     <TextView
-        android:text="@string/hello_world"
+        android:text="{Portal name}"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:id="@+id/portal_name" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ok, add!"
+        android:id="@+id/ok"
+        android:layout_marginTop="75dp"
+        android:layout_below="@+id/portal_name"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:id="@+id/cancel"
+        android:layout_alignTop="@+id/ok"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>
