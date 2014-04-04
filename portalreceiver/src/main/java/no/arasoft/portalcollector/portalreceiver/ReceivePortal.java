@@ -1,6 +1,7 @@
 package no.arasoft.portalcollector.portalreceiver;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +9,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,6 +60,27 @@ public class ReceivePortal extends ActionBarActivity {
 
             setContentView(R.layout.activity_receive_portal);
 
+            TextView portalName = (TextView)findViewById(R.id.portal_name);
+
+            portalName.setText(title);
+
+            db.open();
+            Cursor existingPortals = db.fetchPortalsByTitle(title);
+
+            LinearLayout existingPortalsFound = (LinearLayout)findViewById(R.id.existing_portals_found);
+
+            if (existingPortals.moveToFirst()) {
+                ListView existingPortalList = (ListView) findViewById(R.id.existing_portals);
+
+                existingPortalsFound.setVisibility(View.VISIBLE);
+
+                SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.portal_list_item, existingPortals, new String[]{Db.KEY_TITLE, Db.KEY_LAT, Db.KEY_LON}, new int[]{R.id.portal_title, R.id.portal_lat, R.id.portal_lon});
+
+                existingPortalList.setAdapter(adapter);
+            } else {
+                existingPortalsFound.setVisibility(View.INVISIBLE);
+            }
+
             Button ok = (Button)findViewById(R.id.ok);
             ok.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -62,7 +89,15 @@ public class ReceivePortal extends ActionBarActivity {
                     long id = db.createPortal(title, lat, lon);
                     Log.d("newportal", "Portal added to db: " + id);
                     db.close();
+                    finish();
+                }
+            });
 
+            Button cancel = (Button)findViewById(R.id.cancel);
+            cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    finish();
                 }
             });
         }

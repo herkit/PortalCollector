@@ -111,8 +111,8 @@ public class Db {
 
 
 
-    public Cursor fetchAllNotes() {
-        return fetchAllNotesOrderBy(null, null);
+    public Cursor fetchAllPortals() {
+        return fetchAllPortalsOrderBy(null, null);
     }
 
     public Cursor fetchAllPortalsOrderByTitle() {
@@ -125,7 +125,7 @@ public class Db {
                 KEY_TITLE + " ASC");
     }
 
-    public Cursor fetchAllNotesOrderBy(String orderBy, String ascDesc) {
+    public Cursor fetchAllPortalsOrderBy(String orderBy, String ascDesc) {
         Log.d("DB---------", "fikk: orderBy: "+orderBy);
 
         String order = orderBy;
@@ -148,6 +148,22 @@ public class Db {
         Cursor mCursor = mDb.query(true, DATABASE_TABLE,
                 new String[] {KEY_ROWID, KEY_TITLE, KEY_LAT, KEY_LON},
                 KEY_ROWID + "=" + rowId,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        if (mCursor != null) {
+            mCursor.moveToFirst();
+        }
+        return mCursor;
+    }
+
+    public Cursor fetchPortalsByTitle(String title) {
+        Cursor mCursor = mDb.query(true, DATABASE_TABLE,
+                new String[] {KEY_ROWID, KEY_TITLE, KEY_LAT, KEY_LON},
+                KEY_TITLE + "=\"" + title + "\"",
                 null,
                 null,
                 null,
