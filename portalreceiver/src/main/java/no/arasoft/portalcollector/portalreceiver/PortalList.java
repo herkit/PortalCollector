@@ -1,5 +1,11 @@
 package no.arasoft.portalcollector.portalreceiver;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.Locale;
 
 import android.content.Intent;
@@ -12,6 +18,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +29,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class PortalList extends ActionBarActivity {
@@ -64,7 +72,56 @@ public class PortalList extends ActionBarActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == R.id.action_export) {
+            return exportPortals();
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private boolean exportPortals() {
+        File root = android.os.Environment.getExternalStorageDirectory();
+
+        File dir = new File (root.getAbsolutePath() + "/pois");
+        dir.mkdirs();
+
+        File file = new File(dir, "portals.csv");
+
+        try {
+
+            FileOutputStream fOut = new FileOutputStream(file);
+            OutputStreamWriter osw = new OutputStreamWriter(fOut);
+            PrintWriter pw = new PrintWriter(fOut);
+
+            Cursor c = db.fetchAllPortalsOrderByTitle();
+
+            Boolean hasData = c.moveToFirst();
+            while (hasData) {
+                // Write the string to the file
+                String row = c.getFloat(c.getColumnIndex(Db.KEY_LAT)) + ", " +
+                        c.getFloat(c.getColumnIndex(Db.KEY_LON)) + ", \"" +
+                        c.getString(c.getColumnIndex(Db.KEY_TITLE)) + "\"";
+
+                pw.println(row);
+
+                Log.d("export-portals", row);
+                hasData = c.moveToNext();
+            }
+
+            pw.flush();
+            pw.close();
+            fOut.close();
+
+            Toast.makeText(getApplicationContext(), "Portals exported to " + file.toString(),
+                    Toast.LENGTH_LONG).show();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.i("export-portals", "******* File not found. Did you" +
+                    " add a WRITE_EXTERNAL_STORAGE permission to the   manifest?");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    return true;
     }
 
 }
