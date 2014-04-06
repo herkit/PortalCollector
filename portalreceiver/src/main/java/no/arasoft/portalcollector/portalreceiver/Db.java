@@ -108,11 +108,23 @@ public class Db {
         return mDb.delete(DATABASE_TABLE, KEY_ROWID + "=" + rowId, null) > 0;
     }
 
+    public int deleteAllPortals() {
+        return mDb.delete(DATABASE_TABLE, "", null);
+    }
+
 
 
 
     public Cursor fetchAllPortals() {
         return fetchAllPortalsOrderBy(null, null);
+    }
+
+    public int countPortals() {
+        Cursor q = mDb.rawQuery("SELECT Count(*) as PortalCount FROM " + DATABASE_TABLE, null);
+        if (q.moveToFirst())
+            return q.getInt(0);
+        else
+            return 0;
     }
 
     public Cursor fetchAllPortalsOrderByTitle() {

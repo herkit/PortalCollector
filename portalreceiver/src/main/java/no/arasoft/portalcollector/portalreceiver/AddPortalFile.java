@@ -44,7 +44,7 @@ public class AddPortalFile extends ActionBarActivity {
             Uri file = intent.getData();
             try {
                 InputStream csvStream = getContentResolver().openInputStream(file);
-                InputStreamReader csvStreamReader = new InputStreamReader(csvStream);
+                InputStreamReader csvStreamReader = new InputStreamReader(csvStream, "ISO-8859-1");
                 csvStreamReader.getEncoding();
                 String next[] = {};
                 CSVReader csvReader = new CSVReader(csvStreamReader);

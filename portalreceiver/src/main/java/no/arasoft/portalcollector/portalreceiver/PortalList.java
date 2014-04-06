@@ -10,7 +10,10 @@ import java.nio.charset.Charset;
 import java.security.Provider;
 import java.util.Locale;
 
+import android.app.AlertDialog;
 import android.content.ContentUris;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -34,6 +37,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -43,6 +47,7 @@ import android.widget.Toast;
 public class PortalList extends ActionBarActivity {
 
     private ListView portalList;
+    private TextView portalCount;
     private Db db;
     private SimpleCursorAdapter adapter;
 
@@ -52,8 +57,10 @@ public class PortalList extends ActionBarActivity {
         setContentView(R.layout.activity_portal_list);
 
         portalList = (ListView)findViewById(R.id.portalList);
+        portalCount = (TextView)findViewById(R.id.database_portal_count);
 
         registerForContextMenu(portalList);
+        registerForContextMenu(portalCount);
 
         db = new Db(this);
     }
@@ -64,13 +71,25 @@ public class PortalList extends ActionBarActivity {
         adapter = new SimpleCursorAdapter(this, R.layout.portal_list_item, c, new String[] { Db.KEY_TITLE, Db.KEY_LAT, Db.KEY_LON }, new int[] { R.id.portal_title, R.id.portal_lat, R.id.portal_lon }  );
 
         portalList.setAdapter(adapter);
+
+        int count = db.countPortals();
+        portalCount.setText(Integer.toString(count));
+
     }
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.list_item_popup, menu);
+
+        switch (v.getId()) {
+            case R.id.portalList:
+                inflater.inflate(R.menu.list_item_popup, menu);
+                break;
+            case R.id.database_portal_count:
+                inflater.inflate(R.menu.database_action, menu);
+                break;
+        }
     }
 
     @Override
@@ -89,10 +108,36 @@ public class PortalList extends ActionBarActivity {
 
                 return true;
             }
+            case R.id.menu_clear_database:
+                clearDatabase();
+                return true;
             default: {
                 return super.onContextItemSelected(item);
             }
         }
+    }
+
+    private void clearDatabase() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        final Context toastCtx = this;
+
+        alert.setTitle("Clear database");
+        alert.setMessage("Are you sure you want to clear database? This is an irreversible action!");
+
+        alert.setPositiveButton("Yes!", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                int deleteCount = db.deleteAllPortals();
+                Toast.makeText(toastCtx, "Deleted " + deleteCount + " portals", Toast.LENGTH_SHORT).show();
+                loadPortalData();
+            }
+        });
+
+        alert.setNegativeButton("Heck no!", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        });
+        alert.show();
     }
 
     @Override
