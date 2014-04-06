@@ -66,11 +66,20 @@ public class PortalList extends ActionBarActivity {
     }
 
     private void loadPortalData() {
-        Cursor c = db.fetchAllPortalsOrderByTitle();
+        Cursor allPortalsCursor = db.fetchAllPortalsOrderByTitle();
 
-        adapter = new SimpleCursorAdapter(this, R.layout.portal_list_item, c, new String[] { Db.KEY_TITLE, Db.KEY_LAT, Db.KEY_LON }, new int[] { R.id.portal_title, R.id.portal_lat, R.id.portal_lon }  );
+        if (adapter == null)
+        {
+            adapter = new SimpleCursorAdapter(this, R.layout.portal_list_item, allPortalsCursor, new String[] { Db.KEY_TITLE, Db.KEY_LAT, Db.KEY_LON }, new int[] { R.id.portal_title, R.id.portal_lat, R.id.portal_lon }  );
+            portalList.setAdapter(adapter);
+        }
+        else
+        {
+            adapter.changeCursor(allPortalsCursor);
+            adapter.notifyDataSetChanged();
+        }
 
-        portalList.setAdapter(adapter);
+
 
         int count = db.countPortals();
         portalCount.setText(Integer.toString(count));
