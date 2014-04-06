@@ -1,0 +1,28 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:key="check_existing_portals"
+        android:title="@string/pref_title_check_existing_portals"
+        android:summary="@string/pref_description_check_existing_portals"
+        android:defaultValue="true" />
+
+    <EditTextPreference
+        android:key="portal_export_filename"
+        android:title="@string/pref_title_export_file_name"
+        android:defaultValue="@string/pref_default_export_file_name"
+        android:inputType="textUri"
+        />
+
+    <!-- NOTE: Hide buttons to simplify the UI. Users can touch outside the dialog to
+         dismiss it. -->
+    <!-- NOTE: ListPreference's summary should be set to its value by the activity code. -->
+    <ListPreference
+        android:key="portal_export_encoding"
+        android:title="@string/pref_portal_export_encoding"
+        android:defaultValue="ISO-8859-1"
+        android:entries="@array/pref_portal_export_encoding_list_titles"
+        android:entryValues="@array/pref_portal_export_encoding_list_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+</PreferenceScreen>

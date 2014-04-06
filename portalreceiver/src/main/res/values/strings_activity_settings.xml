@@ -1,0 +1,33 @@
+<resources>
+        <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+
+    <string name="pref_title_check_existing_portals">Check for existing portals</string>
+    <string name="pref_description_check_existing_portals">Always check if portals are already in database</string>
+
+    <string name="pref_title_export_file_name">Export filename</string>
+    <string name="pref_default_export_file_name">portals.csv</string>
+
+    <string name="pref_portal_export_encoding">Choose encoding for exported files</string>
+    <string-array name="pref_portal_export_encoding_list_titles">
+        <item>ISO-8859-1</item>
+        <item>US-ASCII</item>
+        <item>UTF-16</item>
+        <item>UTF-16BE</item>
+        <item>UTF-16LE</item>
+        <item>UTF-8</item>
+    </string-array>
+    <string-array name="pref_portal_export_encoding_list_values">
+        <item>ISO-8859-1</item>
+        <item>US-ASCII</item>
+        <item>UTF-16</item>
+        <item>UTF-16BE</item>
+        <item>UTF-16LE</item>
+        <item>UTF-8</item>
+    </string-array>
+
+</resources>

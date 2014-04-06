@@ -7,8 +7,8 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="C:\Users\Henrik\AndroidStudioProjects\PortalCollector" />
-            <option value="C:\Users\Henrik\AndroidStudioProjects\PortalCollector\portalreceiver" />
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/portalreceiver" />
           </set>
         </option>
       </GradleProjectSettings>
