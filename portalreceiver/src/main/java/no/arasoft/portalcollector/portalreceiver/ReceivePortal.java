@@ -1,7 +1,9 @@
 package no.arasoft.portalcollector.portalreceiver;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.database.Cursor;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +16,16 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,7 +43,6 @@ public class ReceivePortal extends ActionBarActivity {
         String action = intent.getAction();
         String scheme = intent.getScheme();
         String type = intent.getType();
-
 
         if (Intent.ACTION_SEND.equals(action) && type != null) {
             handlePortalLink(intent);
@@ -56,6 +67,9 @@ public class ReceivePortal extends ActionBarActivity {
         while (matcher.find()) {
             lat = Float.valueOf(matcher.group(1));
             lon = Float.valueOf(matcher.group(2));
+
+            setMapPosition();
+
             Log.i("portal", lon + ", " + lat + ", \"" + title + "\"");
 
             setContentView(R.layout.activity_receive_portal);
@@ -100,6 +114,20 @@ public class ReceivePortal extends ActionBarActivity {
                     finish();
                 }
             });
+        }
+    }
+
+    private void setMapPosition() {
+        try {
+            Fragment f = getFragmentManager().findFragmentById(R.id.portal_position_map);
+            GoogleMap map = ((MapFragment)f).getMap();
+            LatLng latlng = new LatLng((double)lat, (double)lon);
+            Marker newmarker = map.addMarker(new MarkerOptions().position(latlng).title("marker title"));
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(latlng).zoom(14.0f).build();
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
+            map.moveCamera(cameraUpdate);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

@@ -17,4 +17,6 @@
     <string name="action_export">Export</string>
     <string name="found_existing_portal_text">Found portal(s) with same name:</string>
 
+
+    <string name="google_maps_api_key">AIzaSyAJHXdXhAQzVVfbqfv7pKXCEV-LzHjy5qk</string>
 </resources>
