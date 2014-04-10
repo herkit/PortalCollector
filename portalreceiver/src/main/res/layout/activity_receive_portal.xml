@@ -15,8 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/portal_name"
-        android:textSize="24dp"
-        android:textStyle="bold"
+        style="@style/LargePortalTitle"
         android:layout_row="0"
         android:layout_column="0" />
 

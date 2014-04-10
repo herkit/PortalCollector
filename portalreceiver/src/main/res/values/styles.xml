@@ -4,5 +4,10 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light">
         <!-- Customize your theme here. -->
     </style>
+    
+    <style name="LargePortalTitle" parent="@android:style/TextAppearance">
+        <item name="android:textSize">24dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 
 </resources>

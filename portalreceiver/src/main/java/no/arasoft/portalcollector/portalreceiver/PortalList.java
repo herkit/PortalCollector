@@ -62,6 +62,15 @@ public class PortalList extends ActionBarActivity {
         registerForContextMenu(portalList);
         registerForContextMenu(portalCount);
 
+        portalList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(getApplicationContext(), PortalViewActivity.class);
+                intent.putExtra("id", l);
+                startActivity(intent);
+            }
+        });
+
         db = new Db(this);
     }
 

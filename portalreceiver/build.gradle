@@ -5,7 +5,7 @@ android {
     buildToolsVersion '19.0.1'
 
     defaultConfig {
-        minSdkVersion 11
+        minSdkVersion 14
         targetSdkVersion 19
         versionCode 1
         versionName "1.0"
@@ -21,7 +21,7 @@ android {
 dependencies {
     compile 'com.android.support:support-v4:19.0.+'
     compile 'com.android.support:appcompat-v7:+'
+    compile 'com.google.android.gms:play-services:+'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('lib/opencsv-2.3.jar')
-    compile 'com.google.android.gms:play-services:+'
 }
