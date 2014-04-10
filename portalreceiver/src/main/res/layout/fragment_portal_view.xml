@@ -34,7 +34,7 @@
         android:id="@+id/portal_position_map"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        class="com.google.android.gms.maps.MapFragment"
+        class="com.google.android.gms.maps.SupportMapFragment"
         />
 
 </GridLayout>

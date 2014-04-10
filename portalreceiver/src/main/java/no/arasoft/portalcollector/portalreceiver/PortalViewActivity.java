@@ -30,8 +30,10 @@ public class PortalViewActivity extends ActionBarActivity {
             Portal portal = db.fetchPortalItem(id);
             db.close();
 
+            Fragment portalFragment = (Fragment)new ViewPortalFragment(portal);
+
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ViewPortalFragment(portal))
+                    .add(R.id.container, portalFragment)
                     .commit();
         }
     }
@@ -57,34 +59,4 @@ public class PortalViewActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class ViewPortalFragment extends Fragment {
-
-        private Portal _portal;
-
-        public ViewPortalFragment(Portal portal) {
-            _portal = portal;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_portal_view, container, false);
-
-            TextView portal_title = (TextView)rootView.findViewById(R.id.portal_title);
-
-
-            portal_title.setText(_portal.getTitle());
-
-            return rootView;
-        }
-
-        @Override
-        public void onActivityCreated(Bundle savedInstanceState) {
-            super.onActivityCreated(savedInstanceState);
-
-        }
-    }
 }
