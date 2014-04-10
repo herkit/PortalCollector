@@ -1,7 +1,5 @@
 package no.arasoft.portalcollector.portalreceiver;
 
-import java.util.Calendar;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -15,10 +13,12 @@ public class Db {
     private static final String TAG = "PortalsDbAdapter";
 
     private static final String DATABASE_NAME = "data";
-    private static final String DATABASE_TABLE = "portals";
+    private static final String DATABASE_TABLE_PORTALS = "portals";
+    private static final String DATABASE_TABLE_TAGS = "tags";
+    private static final String DATABASE_TABLE_PORTAL_TAGS = "portal_tags";
 
     // If you change the database schema, you must increment the database version.
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
 
 
     public static final String KEY_ROWID = "_id";
@@ -30,13 +30,26 @@ public class Db {
     public static final String SORT_DESC = " DESC";
 
 
-    private static final String DATABASE_CREATE = "create table " + DATABASE_TABLE + " ("
-            + KEY_ROWID    + " integer primary key autoincrement, "
-            + KEY_TITLE    + " text not null, "
-            + KEY_LAT + " float not null, "
-            + KEY_LON + " float not null"
+    private static final String CREATE_TABLE_PORTALS = "CREATE TABLE IF NOT EXISTS  " + DATABASE_TABLE_PORTALS + " ("
+            + KEY_ROWID     + " integer primary key autoincrement, "
+            + KEY_TITLE     + " text not null, "
+            + KEY_LAT       + " float not null, "
+            + KEY_LON       + " float not null"
             + ");";
 
+    private static final String CREATE_TABLE_TAGS = "CREATE TABLE IF NOT EXISTS " + DATABASE_TABLE_TAGS + " ("
+            + KEY_ROWID     + " integer primary key autoincrement, "
+            + KEY_TITLE     + " text not null "
+            + ");";
+
+    public static final String KEY_PORTAL_ID = "portal_id";
+    public static final String KEY_TAG_ID = "tag_id";
+
+    private static final String CREATE_TABLE_PORTAL_TAGS = "CREATE TABLE IF NOT EXISTS " + DATABASE_TABLE_PORTAL_TAGS + " ("
+            + KEY_ROWID     + " integer primary key autoincrement, "
+            + KEY_PORTAL_ID + " integer not null, "
+            + KEY_TAG_ID    + " integer not null "
+            + ");";
 
 
     private DatabaseHelper mDbHelper;
@@ -52,14 +65,22 @@ public class Db {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL(DATABASE_CREATE);
+            Log.w(TAG, "Creating database " + DATABASE_NAME);
+
+            db.execSQL(CREATE_TABLE_PORTALS);
+            db.execSQL(CREATE_TABLE_TAGS);
+            db.execSQL(CREATE_TABLE_PORTAL_TAGS);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
                     + newVersion + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS notes");
+
+            if (oldVersion < 4 && newVersion == 4) {
+                db.execSQL(CREATE_TABLE_TAGS);
+                db.execSQL(CREATE_TABLE_PORTAL_TAGS);
+            }
 
             //TODO: modifisere DB skjema, legge til created og modified date
 
@@ -95,7 +116,7 @@ public class Db {
         initialValues.put(KEY_TITLE, title);
         initialValues.put(KEY_LAT, lat);
         initialValues.put(KEY_LON, lon);
-        return mDb.insert(DATABASE_TABLE, null, initialValues);
+        return mDb.insert(DATABASE_TABLE_PORTALS, null, initialValues);
     }
 
     /**
@@ -105,11 +126,11 @@ public class Db {
      * @return true if deleted, false otherwise
      */
     public boolean deletePortal(long rowId) {
-        return mDb.delete(DATABASE_TABLE, KEY_ROWID + "=" + rowId, null) > 0;
+        return mDb.delete(DATABASE_TABLE_PORTALS, KEY_ROWID + "=" + rowId, null) > 0;
     }
 
     public int deleteAllPortals() {
-        return mDb.delete(DATABASE_TABLE, "", null);
+        return mDb.delete(DATABASE_TABLE_PORTALS, "", null);
     }
 
 
@@ -120,7 +141,7 @@ public class Db {
     }
 
     public int countPortals() {
-        Cursor q = mDb.rawQuery("SELECT Count(*) as PortalCount FROM " + DATABASE_TABLE, null);
+        Cursor q = mDb.rawQuery("SELECT Count(*) as PortalCount FROM " + DATABASE_TABLE_PORTALS, null);
         if (q.moveToFirst())
             return q.getInt(0);
         else
@@ -128,7 +149,7 @@ public class Db {
     }
 
     public Cursor fetchAllPortalsOrderByTitle() {
-        return mDb.query(DATABASE_TABLE,
+        return mDb.query(DATABASE_TABLE_PORTALS,
                 new String[] {KEY_ROWID, KEY_TITLE, KEY_LAT, KEY_LON},
                 null,
                 null,
@@ -146,7 +167,7 @@ public class Db {
         else
             order += SORT_DESC;
 
-        return mDb.query(DATABASE_TABLE,
+        return mDb.query(DATABASE_TABLE_PORTALS,
                 new String[] {KEY_ROWID, KEY_TITLE, KEY_LAT, KEY_LON},
                 null,
                 null,
@@ -157,7 +178,7 @@ public class Db {
 
 
     public Cursor fetchPortal(long rowId) throws SQLException {
-        Cursor mCursor = mDb.query(true, DATABASE_TABLE,
+        Cursor mCursor = mDb.query(true, DATABASE_TABLE_PORTALS,
                 new String[] {KEY_ROWID, KEY_TITLE, KEY_LAT, KEY_LON},
                 KEY_ROWID + "=" + rowId,
                 null,
@@ -173,7 +194,7 @@ public class Db {
     }
 
     public Cursor fetchPortalsByTitle(String title) {
-        Cursor mCursor = mDb.query(true, DATABASE_TABLE,
+        Cursor mCursor = mDb.query(true, DATABASE_TABLE_PORTALS,
                 new String[] {KEY_ROWID, KEY_TITLE, KEY_LAT, KEY_LON},
                 KEY_TITLE + "=\"" + title + "\"",
                 null,
@@ -206,7 +227,7 @@ public class Db {
         args.put(KEY_LAT, lat);
         args.put(KEY_LON, lon);
 
-        return mDb.update(DATABASE_TABLE,
+        return mDb.update(DATABASE_TABLE_PORTALS,
                 args,
                 KEY_ROWID + "=" + rowId,
                 null) > 0;

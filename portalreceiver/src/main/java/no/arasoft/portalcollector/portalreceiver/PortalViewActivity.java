@@ -74,7 +74,7 @@ public class PortalViewActivity extends ActionBarActivity {
             View rootView = inflater.inflate(R.layout.fragment_portal_view, container, false);
 
             TextView portal_title = (TextView)rootView.findViewById(R.id.portal_title);
-            
+
 
             portal_title.setText(_portal.getTitle());
 
