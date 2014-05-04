@@ -3,6 +3,7 @@ package no.arasoft.portalcollector.portalreceiver;
 import android.app.Fragment;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.UrlQuerySanitizer;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,16 +59,31 @@ public class ReceivePortal extends ActionBarActivity {
 
     void handlePortalLink(Intent intent) {
         String content = intent.getStringExtra(Intent.EXTRA_TEXT);
-        Pattern pattern = Pattern.compile("ingress\\.com/intel\\?ll=(\\d+\\.\\d+),(\\d+\\.\\d+)");
+
+        UrlQuerySanitizer sanitizer = new UrlQuerySanitizer();
+
+        sanitizer.setAllowUnregisteredParamaters(true);
+        sanitizer.parseUrl(content);
+        String pll = sanitizer.getValue("pll");
+        String ll = sanitizer.getValue("ll");
+
+        Log.i("ingress-url", "pll=" + pll);
+        Log.i("ingress-url", "ll=" + ll);
 
         title = intent.getStringExtra(Intent.EXTRA_SUBJECT);
 
-        Log.i("intent", content);
+        String pos;
+        if (pll != null)
+            pos = pll;
+        else
+            pos = ll;
 
-        Matcher matcher = pattern.matcher(content);
-        while (matcher.find()) {
-            lat = Float.valueOf(matcher.group(1));
-            lon = Float.valueOf(matcher.group(2));
+        if (pos != null) {
+            String[] latlng = pos.split(",");
+            Log.i("ingress-url", "lat="+latlng[0]);
+            Log.i("ingress-url", "lng="+latlng[1]);
+            lat = Float.valueOf(latlng[0]);
+            lon = Float.valueOf(latlng[1]);
 
             setMapPosition();
 
@@ -115,6 +132,9 @@ public class ReceivePortal extends ActionBarActivity {
                 }
             });
         }
+
+        Log.i("intent", content);
+
     }
 
     private void setMapPosition() {
