@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.google.android.gms.maps.model.LatLng;
+
 public class Db {
 
     private static final String TAG = "PortalsDbAdapter";
@@ -233,6 +235,23 @@ public class Db {
                 null) > 0;
     }
 
+    public Cursor getAllPortalsInArea(LatLng leftCorner, LatLng rightCorner) {
+        Cursor mCursor = mDb.query(true, DATABASE_TABLE_PORTALS,
+                new String[] {KEY_ROWID, KEY_TITLE, KEY_LAT, KEY_LON},
+                KEY_LAT + " >= " + leftCorner.latitude +
+                " AND " + KEY_LON + " >= " + leftCorner.longitude +
+                " AND " + KEY_LAT + " <= " + rightCorner.latitude +
+                " AND " + KEY_LON + " <= " + rightCorner.longitude,
+                null,
+                null,
+                null,
+                null,
+                null);
 
+        if (mCursor != null) {
+            mCursor.moveToFirst();
+        }
+        return mCursor;
+    }
 
 }
